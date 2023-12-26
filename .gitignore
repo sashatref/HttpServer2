@@ -1,0 +1,8 @@
+/Builds*
+/include
+/bin
+/translations
+*.user
+/BUILD_QT_5_9_2_VC_14/HelperLibrary
+/HttpTest_QT_5_9_2_VC_14
+/BUILD_QT_5_9_2_VC_14

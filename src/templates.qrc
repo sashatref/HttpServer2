@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>templates/notFound.html</file>
+        <file>templates/directory.html</file>
+    </qresource>
+</RCC>
