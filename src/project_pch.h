@@ -32,11 +32,9 @@
 
 #include <HelperLibrary/functions.h>
 #include <HelperLibrary/Exceptions/userexception.h>
-#include <HelperLibrary/mylist.hpp>
 #include <HelperLibrary/converterfunctions.h>
 #include <HelperLibrary/igadget.h>
 #include <HelperLibrary/releaseassert.h>
-#include <HelperLibrary/Perfomance/scopetimer.h>
 #include <HelperLibrary/anymacro.h>
 #include <HelperLibrary/setgetMacro.h>
 #include <HelperLibrary/signalwaiter.h>

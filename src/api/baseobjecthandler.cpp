@@ -2,8 +2,6 @@
 #include "baseobjecthandler.h"
 #include "../httpexception.h"
 
-using namespace LinqContainers;
-
 namespace HttpServer2Qt
 {
 
@@ -69,8 +67,6 @@ void BaseObjectHandler::deleteRecord(QByteArray &/*_data*/, QByteArray &/*_conte
 
 void BaseObjectHandler::enumRecords(QByteArray &_data, QByteArray &/*_contentType*/)
 {
-    ScopeTimer timer1(__FUNCTION__);
-
     const QVariantMap &inMap = getParams();
 
     int countRecord = 10;
@@ -88,10 +84,10 @@ void BaseObjectHandler::enumRecords(QByteArray &_data, QByteArray &/*_contentTyp
 
     QStringList fields = inMap["fields"].toStringList();
 
-    MyVector<QVariant> data;
+    QVector<QVariant> data;
     emit getObjectList(data, m_typeId);
 
-    MyVector<QVariant> filtered = data.where([&](const QVariant &_dataItem) -> bool
+    auto filterFunc = [&](const QVariant &_dataItem) -> bool
     {
         const IGadget *gadget = GadgetHelper::getIGadget(_dataItem, false);
         R_ASSERT_X(gadget, "const IGadget *gadget == 0");
@@ -127,11 +123,19 @@ void BaseObjectHandler::enumRecords(QByteArray &_data, QByteArray &/*_contentTyp
         }
 
         return true;
-    });
+    };
 
-    //PERFORMANCE(ScopeTimer timer4("Point4"));
+    QVector<QVariant> filtered;
 
-    filtered.sort([sorting](const QVariant &_val1, const QVariant &_val2) -> bool
+    for(auto &it : data)
+    {
+        if(filterFunc(it))
+        {
+            filtered << it;
+        }
+    }
+
+    auto sortFunc = [sorting](const QVariant &_val1, const QVariant &_val2) -> bool
     {
         const IGadget *gadget1 = GadgetHelper::getIGadget(_val1, false);
         const IGadget *gadget2 = GadgetHelper::getIGadget(_val2, false);
@@ -153,11 +157,10 @@ void BaseObjectHandler::enumRecords(QByteArray &_data, QByteArray &/*_contentTyp
             return res;
         }
 
-
         return false;
-    });
+    };
 
-    //PERFORMANCE(ScopeTimer timer5("Point5"));
+    qSort(filtered.begin(), filtered.end(), sortFunc);
 
     int start = (page - 1) * countRecord;
     Numerics::fixValue(start, 0, INT_MAX);
